@@ -8,7 +8,7 @@ const validateRequest = (req, res, next) => {
       success: false,
       errors: errors.array().map((err) => ({
         field: err?.path || null,
-        message: err.msg,
+        message: err?.msg,
       })),
     });
   }

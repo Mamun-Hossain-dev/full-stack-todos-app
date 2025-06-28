@@ -6,6 +6,7 @@ const connectDB = require("./config/db");
 
 // internal imports
 const authRoutes = require("./routes/authRoutes");
+const todoRoutes = require("./routes/todoRoutes");
 
 // configuration
 dotenv.config();
@@ -23,11 +24,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // sub-app routes
-app.use("/auth", authRoutes);
-
-app.get("/", (req, res) => {
-  res.send("hello world!");
-});
+app.use("/api/auth", authRoutes);
+app.use("/api/todos", todoRoutes);
 
 const port = process.env.PORT || 5000;
 
