@@ -18,7 +18,7 @@ const app = express();
 // Enable cross-origin resource sharing
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: "localhost://3000",
     credentials: true,
   })
 );
