@@ -18,7 +18,7 @@ const app = express();
 // Enable cross-origin resource sharing
 app.use(
   cors({
-    origin: "localhost://3000",
+    origin: "https://full-stack-todos-app-frontend.vercel.app/",
     credentials: true,
   })
 );
