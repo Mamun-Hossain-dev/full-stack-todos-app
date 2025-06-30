@@ -17,17 +17,23 @@ const register = async (req, res) => {
     const accessToken = generateAccessToken(user.id);
     const refreshToken = generateRefreshToken(user.id);
     // set cookies
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      samesite: "lax",
-      maxAge: 7 * 14 * 60 * 60 * 1000,
-    });
+    res
+      .cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Lax",
+        maxAge: 15 * 60 * 1000, // 15 minutes
+      })
+      .cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
 
     res.status(201).json({
       msg: "user created successfully",
       user: { id: user._id, name: user.name },
-      accessToken,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -38,7 +44,7 @@ const login = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
-    if (!user || !user.matchedPassword(password)) {
+    if (!user || !(await user.matchedPassword(password))) {
       return res.status(401).json({ msg: "Invalid credentials" });
     }
 
@@ -46,17 +52,23 @@ const login = async (req, res) => {
     const accessToken = generateAccessToken(user.id);
     const refreshToken = generateRefreshToken(user.id);
     // set cookies
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      samesite: "lax",
-      maxAge: 7 * 14 * 60 * 60 * 1000,
-    });
+    res
+      .cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Lax",
+        maxAge: 15 * 60 * 1000, // 15 minutes
+      })
+      .cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
 
     res.status(200).json({
       msg: "successfully logged user",
       user: { id: user._id, name: user.name },
-      accessToken,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -64,7 +76,7 @@ const login = async (req, res) => {
 };
 
 const refresh = async (req, res) => {
-  const token = req.cookies.refreshToken;
+  const token = req.cookies?.refreshToken;
   if (!token) return res.status(401).json({ msg: "No refresh token" });
 
   try {
@@ -80,10 +92,14 @@ const logout = async (req, res) => {
   res
     .clearCookie("refreshToken", {
       httpOnly: true,
-      samesite: "lax",
+      sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
     })
     .json({ msg: "logged out successfully" });
+};
+
+const getMe = async (req, res) => {
+  res.json(req.user);
 };
 
 module.exports = {
@@ -91,4 +107,5 @@ module.exports = {
   login,
   refresh,
   logout,
+  getMe,
 };
