@@ -82,7 +82,15 @@ const refresh = async (req, res) => {
   try {
     const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
     const accessToken = generateAccessToken(decoded.id);
-    res.json({ accessToken });
+    // ✅ Set access token in HTTP-only cookie
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      sameSite: "Lax", // or "None" if using cross-origin
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 15 * 60 * 1000, // 15 minutes
+    });
+
+    res.json({ success: true });
   } catch (err) {
     res.status(403).json({ error: "token err: ", err });
   }
