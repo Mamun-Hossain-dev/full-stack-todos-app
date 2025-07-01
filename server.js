@@ -16,9 +16,20 @@ const app = express();
 
 /** middlewares **/
 // Enable cross-origin resource sharing
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://full-stack-todos-app-frontend.vercel.app",
+];
+
 app.use(
   cors({
-    origin: "https://full-stack-todos-app-frontend.vercel.app/",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
