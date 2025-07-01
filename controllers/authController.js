@@ -20,14 +20,14 @@ const register = async (req, res) => {
     res
       .cookie("accessToken", accessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Lax",
+        secure: true,
+        sameSite: "none",
         maxAge: 15 * 60 * 1000, // 15 minutes
       })
       .cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Lax",
+        secure: true,
+        sameSite: "none",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
@@ -55,14 +55,14 @@ const login = async (req, res) => {
     res
       .cookie("accessToken", accessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Lax",
+        secure: true,
+        sameSite: "none",
         maxAge: 15 * 60 * 1000, // 15 minutes
       })
       .cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Lax",
+        secure: true,
+        sameSite: "none",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
@@ -82,7 +82,7 @@ const refresh = async (req, res) => {
   try {
     const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
     const accessToken = generateAccessToken(decoded.id);
-    // ✅ Set access token in HTTP-only cookie
+
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       sameSite: "Lax", // or "None" if using cross-origin
